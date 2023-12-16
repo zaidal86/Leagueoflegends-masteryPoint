@@ -35,7 +35,7 @@ const link = {
     version: 'https://ddragon.leagueoflegends.com/api/versions.json',
     championID: 'http://ddragon.leagueoflegends.com/cdn/{version}/data/en_US/champion.json',
     summonerID: 'https://{region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summonerName}',
-    masteryChampion: 'https://{region}.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/{summonerID}/by-champion/{championID}'
+    masteryChampion: 'https://{region}.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/{byPuuid}/by-champion/{championID}'
 };
 
 const getVersion = (callback) => {
@@ -61,7 +61,7 @@ const getSumonnerID = (region, accounts, callback) => {
 };
 
 const getMastery = (region, accounts, champID, callback) => {
-    const linkparsed = link.masteryChampion.replace('{region}', region).replace('{summonerID}', accounts).replace('{championID}', champID);
+    const linkparsed = link.masteryChampion.replace('{region}', region).replace('{byPuuid}', accounts).replace('{championID}', champID);
 
     axios.get(linkparsed, RiotKeyHeaders).then((data) => {
         callback(data.data);
@@ -82,7 +82,7 @@ rl.question("Enter the champion's name :", (championName) => {
                 const number = accounts[select].length;
                 for (let index = 0; index < number; index++) {
                     getSumonnerID(regions, accounts[select][index], (dataID) => {
-                        getMastery(regions, dataID.id, champID, (data) => {
+                        getMastery(regions, dataID.puuid, champID, (data) => {
                             total.push(data.championPoints || 0);
                             console.log(`\u001b[33;1m[LOGS]\u001b[0m \u001b[36m${data.championPoints || 0}\u001b[0m : account \u001b[32m${accounts[select][index]}\u001b[0m at \u001b[31m${regions}\u001b[0m`);
                             table.push([
